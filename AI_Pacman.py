@@ -11,11 +11,15 @@ wn.setup(700,700)
 #turtle.pen(fillcolor="black", pencolor="yellow", pensize=10)
 #tk.mainloop()
 
+#register shapes
+turtle.register_shape("map.gif")
+
+
 #maze yarat
 class Maze(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
-        self.shape("square")
+        self.shape("map.gif")
         self.pen(fillcolor="black", pencolor="yellow", pensize=10)
         self.penup()
         self.speed(0)
