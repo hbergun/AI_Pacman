@@ -10,10 +10,14 @@ wn.title("Pacman Game With Artificial Intelligence")
 wn.setup(width=.99,height=.90,startx=0,starty=0)
 
 
+
+#register shapes
+turtle.register_shape("map.gif")
+#maze yarat
 class Maze(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
-        self.shape("square")
+        self.shape("map.gif")
         self.pen(fillcolor="black", pencolor="yellow", pensize=10)
         self.penup()
         self.speed(0)
