@@ -1,11 +1,16 @@
 import turtle
 import math
+import tkinter
+import ctypes
+import Heuristic
+
+res_x=ctypes.windll.user32.GetSystemMetrics(0)
+res_y=ctypes.windll.user32.GetSystemMetrics(1)
 wn=turtle.Screen()
 wn.bgcolor("black")
 wn.title("Pacman Game With Artificial Intelligence")
-wn.setup(700,700)
+wn.setup(width=.99,height=.90,startx=0,starty=0)
  
-
 
 #register shapes
 wn.register_shape("map.gif")
@@ -14,7 +19,6 @@ wn.register_shape("Pacman_Right.gif")
 wn.register_shape("Pacman_Left.gif")
 wn.register_shape("Pacman_Bottom.gif")
 wn.register_shape("Pacman_Up.gif")
-
 
 #maze yarat
 class Maze(turtle.Turtle):
@@ -25,7 +29,7 @@ class Maze(turtle.Turtle):
         self.penup()
         self.speed(0)
         
-class player(turtle.Turtle):
+class Player(turtle.Turtle):
     def __init__(self):
         turtle.Turtle.__init__(self)
         self.shape("Pacman_Right.gif")
@@ -74,7 +78,7 @@ class player(turtle.Turtle):
         else:
             return False
         
-class forage(turtle.Turtle):
+class Forage(turtle.Turtle):
     def __init__(self,x,y): #Yem kurucu metod
         turtle.Turtle.__init__(self)
         self.shape("apple.gif")
@@ -82,6 +86,7 @@ class forage(turtle.Turtle):
         self.penup()
         self.speed(0) 
         self.goto(x,y)
+    
     def destroy(self):
         self.goto(2000,2000)
         self.hideturtle() 
@@ -91,21 +96,23 @@ def create_maze(grid):
     for y in range(len(grid)):                      #Labirent İçin Kodlanan Grid'in Tüm Birimleri Çizilecek
         for x in range(len(grid[y])):                
             character = grid[y][x]                   
-            screen_x = -588 + (x * 24)   #Her Bir Square 24x24 Bit       
-            screen_y = 288 - (y * 24)    #Ekrandaki Maze Tam Center'lı Gibi Düşünülmeli Analitik Düzlem Üzerinde             
+            screen_x = ((-res_x/2)+(res_x-960)/2) + (x * 24)   #Her Bir Square 24x24 Bit       960=40*24
+            screen_y = (res_y/3) - (y * 24)    #Ekrandaki Maze Tam Center'lı Gibi Düşünülmeli Analitik Düzlem Üzerinde             
 
             if character == "+":                     
                 maze.goto(screen_x, screen_y)        
                 maze.stamp()   #Elemanın Ekranda Kalmasını Sağlıyor Stampleniyor                      
                 walls.append((screen_x, screen_y))   
-            elif character =="P":
-                player.goto(screen_x, screen_y)        
-            elif character=="T":
-                forages.append(forage(screen_x,screen_y))    
+            elif character == "P": #Hadi Bu Pacman 'in P si
+                player.goto(screen_x, screen_y)
+                print('Pacman ',screen_x,screen_y)        
+            elif character == "T": # T yi koyarken neyi düşündün ??
+                forages.append(Forage(screen_x,screen_y))
+                print("Forage",screen_x,screen_y)    
             
 grid = [
 #Grid İçinde Rastgele Bir Yere Elaman Eklenirken Bunu Grid Üzerinde Boş Olen Yerlerden Birine Yapıcaz.
-"++++++++++++++++++++++++++++++++++++++++", 
+"++++++++++++++++++++++++++++++++++++++++", #40x21
 "+P              T+++++++               +",
 "+ ++++++ +++++++ +++++++ +++++++ +++++ +",
 "+                                      +",
@@ -128,21 +135,18 @@ grid = [
 "++++++++++++++++++++++++++++++++++++++++",
 ]
 maze=Maze()
-walls=[]
-player=player()
-
-
+player=Player()
 walls=[]  #oyun duvarları koordinatları
 forages=[]
 create_maze(grid)
 
 #print(walls) eğer koordinatları görmek istiyorsanız
-turtle.listen()
+wn.listen()
 
-turtle.onkey(player.go_left,"Left")
-turtle.onkey(player.go_right,"Right")
-turtle.onkey(player.go_down,"Down")
-turtle.onkey(player.go_up,"Up")
+wn.onkey(player.go_left,"Left")
+wn.onkey(player.go_right,"Right")
+wn.onkey(player.go_down,"Down")
+wn.onkey(player.go_up,"Up")
 wn.tracer(0)
 
 while True:
