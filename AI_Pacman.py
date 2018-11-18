@@ -3,7 +3,8 @@ import math
 import tkinter
 import ctypes
 import Heuristic
-
+import queue
+queue=queue.Queue()
 res_x=ctypes.windll.user32.GetSystemMetrics(0)
 res_y=ctypes.windll.user32.GetSystemMetrics(1)
 wn=turtle.Screen()
@@ -11,7 +12,6 @@ wn.bgcolor("black")
 wn.title("Pacman Game With Artificial Intelligence")
 wn.setup(width=.99,height=.90,startx=0,starty=0)
  
-
 #register shapes
 wn.register_shape("map.gif")
 wn.register_shape("apple.gif")
@@ -36,6 +36,7 @@ class Player(turtle.Turtle):
         self.color("yellow")
         self.penup()
         self.speed(0)
+        self.travel_cost=0
     
     def go_up(self):
         #bir sonraki hamlenin koordinatları alınıyor
@@ -43,8 +44,9 @@ class Player(turtle.Turtle):
         move_to_y=player.ycor()+24
         #eğer bir sonraki hamle duvar değilse oyna
         if(move_to_x,move_to_y) not in walls:
-            self.goto(move_to_x,move_to_y) 
+            self.goto(move_to_x,move_to_y)
             self.shape("Pacman_Up.gif")
+            Heuristic.TravelCost(self)
     
     def go_down(self):
         move_to_x=player.xcor()
@@ -52,8 +54,8 @@ class Player(turtle.Turtle):
         if(move_to_x,move_to_y) not in walls:
             self.goto(move_to_x,move_to_y)
             self.shape("Pacman_Bottom.gif")
+            Heuristic.TravelCost(self)
            
-            
     
     def go_left(self):
          move_to_x=player.xcor()-24
@@ -61,6 +63,8 @@ class Player(turtle.Turtle):
          if(move_to_x,move_to_y) not in walls:
             self.goto(move_to_x,move_to_y)
             self.shape("Pacman_Left.gif")
+            Heuristic.TravelCost(self)
+
     
     def go_right(self):
          move_to_x=player.xcor()+24
@@ -68,6 +72,9 @@ class Player(turtle.Turtle):
          if(move_to_x,move_to_y) not in walls:
             self.goto(move_to_x,move_to_y)
             self.shape("Pacman_Right.gif")
+            Heuristic.TravelCost(self)
+
+
             
     def is_collision(self, other):
         a=self.xcor()-other.xcor()
@@ -105,6 +112,7 @@ def create_maze(grid):
                 walls.append((screen_x, screen_y))   
             elif character == "P": #Hadi Bu Pacman 'in P si
                 player.goto(screen_x, screen_y)
+
                 print('Pacman ',screen_x,screen_y)        
             elif character == "T": # T yi koyarken neyi düşündün ??
                 forages.append(Forage(screen_x,screen_y))
@@ -147,6 +155,7 @@ wn.onkey(player.go_left,"Left")
 wn.onkey(player.go_right,"Right")
 wn.onkey(player.go_down,"Down")
 wn.onkey(player.go_up,"Up")
+
 wn.tracer(0)
 
 while True:
