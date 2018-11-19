@@ -132,23 +132,19 @@ pathDict={
 
 def IsPosible(x_pos,y_pos):
     if (x_pos+24,y_pos) not in walls and (x_pos+24,y_pos) not in visited: #            xxP P Bir Duvarmı ? Veya P Ziyaret Edildi Mi?
-        pathDict[(x_pos+24,y_pos)]=''       #    Path İçin Bir Sözlük                   x
-        pathDict[(x_pos+24,y_pos)]+=str(x_pos)+'/'+str(y_pos)
+        pathDict[(x_pos+24,y_pos)]=(x_pos,y_pos)
         queue.put((x_pos+24,y_pos))
         visited.append((x_pos+24,y_pos))
     if (x_pos-24,y_pos) not in walls and (x_pos-24,y_pos) not in visited:
-        pathDict[(x_pos-24,y_pos)]=''
-        pathDict[(x_pos-24,y_pos)]+=str(x_pos)+'/'+str(y_pos)
+        pathDict[(x_pos-24,y_pos)]=(x_pos,y_pos)
         queue.put((x_pos-24,y_pos))
         visited.append((x_pos-24,y_pos))
     if (x_pos,y_pos+24) not in walls and (x_pos,y_pos+24) not in visited:
-        pathDict[(x_pos,y_pos+24)]=''
-        pathDict[(x_pos,y_pos+24)]+=str(x_pos)+'/'+str(y_pos)
+        pathDict[(x_pos,y_pos+24)]=(x_pos,y_pos)
         queue.put((x_pos,y_pos+24))
         visited.append((x_pos,y_pos+24))
     if (x_pos,y_pos-24) not in walls and (x_pos,y_pos-24) not in visited:
-        pathDict[(x_pos,y_pos-24)]=''
-        pathDict[(x_pos,y_pos-24)]+=str(x_pos)+'/'+str(y_pos)
+        pathDict[(x_pos,y_pos-24)]=(x_pos,y_pos)
         queue.put((x_pos,y_pos-24))
         visited.append((x_pos,y_pos-24))
     if(len(queue.queue)!=0) and (-288.0,232.0) not in visited: #Test Cord end.xcor(),end.ycor()
@@ -183,12 +179,15 @@ grid = [
 "++++++++++++++++++++++++++++++++++++++++",
 ]
 
+backtraverse_paths=[] #Rekürsif Fonksiyonun İçinden Değer Çıkarmak İçin Global Değişken Dışında Daha Doğru ?
 def BackTraverse(corx,cory):
-    PrevPath=pathDict[(corx,cory)].split('/')
-    if  (float(PrevPath[0]),float(PrevPath[1])) != (-456.0,232.0):
-        BackTraverse(float(PrevPath[0]),float(PrevPath[1]))
+    backtraverse_paths.append((corx,cory))
+    last_path=pathDict[(corx,cory)]
+    if  last_path != (-456.0,232.0):
+        BackTraverse(last_path[0],last_path[1])
     else:
-        return 
+        backtraverse_paths.append((corx,cory))
+        return
 
 
 def setupMaze(grid):
@@ -226,13 +225,7 @@ visited.append((sprite.xcor(),sprite.ycor()))  #İlk Değeri Visited Olarak İş
 IsPosible(sprite.xcor(),sprite.ycor()) #
 
 BackTraverse(-288.0,232.0)
-
-BackVal=pathDict[-288.0,232.0].split('/') #Ulaşılması İstenen Değerden Geriye doğru gidilir.
-
-
-
-
-
+print(backtraverse_paths)
 
 while True:
     sprite.spriteright()
