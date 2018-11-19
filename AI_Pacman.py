@@ -9,6 +9,7 @@ import time
 
 queue=queue.Queue()
 visited=[]
+visiteddfs=[]
 res_x=ctypes.windll.user32.GetSystemMetrics(0)
 res_y=ctypes.windll.user32.GetSystemMetrics(1)
 wn=turtle.Screen()
@@ -60,12 +61,15 @@ class Sprite(turtle.Turtle):  #turtle hareket eden nesne olarak baz alındı
                 endProgram()
             if (x_walls +24, y_walls) in walls:           
                 Heuristic.TravelCost(self)
-                if(x_walls, y_walls -24) not in walls:   
+                if(x_walls, y_walls -24) not in walls:
+                    visiteddfs.append((x_walls,y_walls-24))   
                     self.forward(24)
                 else:
+                    visiteddfs.append((x_walls,y_walls-24))   
                     self.right(90)
             else:
                 Heuristic.TravelCost(self)
+                visiteddfs.append((x_walls,y_walls-24))   
                 self.left(90)
                 self.forward(24)
 
@@ -79,10 +83,13 @@ class Sprite(turtle.Turtle):  #turtle hareket eden nesne olarak baz alındı
             if (x_walls, y_walls +24) in walls:       # check to see if they are walls on the left
                 Heuristic.TravelCost(self)
                 if(x_walls +24, y_walls) not in walls:
+                    visiteddfs.append((x_walls,y_walls-24))   
                     self.forward(24)
                 else:
+                    visiteddfs.append((x_walls,y_walls-24))   
                     self.right(90)
             else:
+                visiteddfs.append((x_walls,y_walls-24))   
                 Heuristic.TravelCost(self)
                 self.left(90)
                 self.forward(24)
@@ -97,10 +104,13 @@ class Sprite(turtle.Turtle):  #turtle hareket eden nesne olarak baz alındı
             if (x_walls -24, y_walls ) in walls:  # check to see if they are walls on the left
                 Heuristic.TravelCost(self)
                 if (x_walls, y_walls + 24) not in walls:
+                    visiteddfs.append((x_walls,y_walls-24))   
                     self.forward(24)
                 else:
+                    visiteddfs.append((x_walls,y_walls-24))   
                     self.right(90)
             else:
+                visiteddfs.append((x_walls,y_walls-24))   
                 Heuristic.TravelCost(self)
                 self.left(90)
                 self.forward(24)
@@ -115,10 +125,15 @@ class Sprite(turtle.Turtle):  #turtle hareket eden nesne olarak baz alındı
             if (x_walls, y_walls -24) in walls:  # check to see if they are walls on the left
                 Heuristic.TravelCost(self)
                 if (x_walls - 24, y_walls) not in walls:
+                    visiteddfs.append((x_walls,y_walls-24))   
+                    Heuristic.TravelCost(self)
                     self.forward(24)
                 else:
+                    visiteddfs.append((x_walls,y_walls-24))   
+                    Heuristic.TravelCost(self)
                     self.right(90)
             else:
+                visiteddfs.append((x_walls,y_walls-24))   
                 Heuristic.TravelCost(self)
                 self.left(90)
                 self.forward(24)
@@ -126,9 +141,8 @@ class Sprite(turtle.Turtle):  #turtle hareket eden nesne olarak baz alındı
 def endProgram():
     wn.exitonclick()
     sys.exit()
-pathDict={
 
-}
+pathDict={}
 
 def IsPosible(x_pos,y_pos):
     if (x_pos+24,y_pos) not in walls and (x_pos+24,y_pos) not in visited: #            xxP P Bir Duvarmı ? Veya P Ziyaret Edildi Mi?
@@ -147,37 +161,61 @@ def IsPosible(x_pos,y_pos):
         pathDict[(x_pos,y_pos-24)]=(x_pos,y_pos)
         queue.put((x_pos,y_pos-24))
         visited.append((x_pos,y_pos-24))
-    if(len(queue.queue)!=0) and (-288.0,232.0) not in visited: #Test Cord end.xcor(),end.ycor()
+    #if(len(queue.queue)!=0) and (-288.0,232.0) not in visited: #Test Cord end.xcor(),end.ycor() Çalışan
+    if(len(queue.queue)!=0) and (end.xcor(),end.ycor()) not in visited: #Test Cord end.xcor(),end.ycor()
         x_y_pos=queue.get()
         IsPosible(x_y_pos[0],x_y_pos[1])
     else:
         return
-    
+
+#grid = [
+##Grid İçinde Rastgele Bir Yere Elaman Eklenirken Bunu Grid Üzerinde Boş Olen Yerlerden Birine Yapıcaz.
+#"++++++++++++++++++++++++++++++++++++++++", #40x21
+#"+s               +++++++               +",
+#"+ ++++++ +++++++ +++++++ +++++++ +++++ +",
+#"+                                      +",
+#"+ ++++++ ++ +++++++++++++++++ ++ +++++ +",
+#"+        ++      +++++++      ++       +",
+#"++++++++ +++++++ +++++++ +++++++ +++++++",
+#"++++++++ ++                   ++ +++++++",
+#"++++++++ ++ ++++++++ ++++++++ ++ +++++++",
+#"+                                      +",
+#"++++++++ ++ ++++++++ ++++++++ ++ +++++++",
+#"++++++++ ++                   ++ +++++++",
+#"++++++++ ++ +++++++++++++++++ ++ +++++++",
+#"+                +++++++               +",
+#"+ ++++++ +++++++ +++++++ +++++++ +++++ +",
+#"+     ++                         ++    +",
+#"+++++ ++ +++++++ +++++++ +++++++ ++ ++++",
+#"+        +++++++    +    +++++++       +",
+#"+ +++++++++++++++++ + ++++++++++++++++ +",
+#"+                                      +",
+#"++++++++++++++++++++++++++++++++++++++++",
+#]
 
 grid = [
-#Grid İçinde Rastgele Bir Yere Elaman Eklenirken Bunu Grid Üzerinde Boş Olen Yerlerden Birine Yapıcaz.
-"++++++++++++++++++++++++++++++++++++++++", #40x21
-"+s               +++++++e              +",
-"+ ++++++ +++++++ +++++++ +++++++ +++++ +",
-"+                                      +",
-"+ ++++++ ++ +++++++++++++++++ ++ +++++ +",
-"+        ++      +++++++      ++       +",
-"++++++++ +++++++ +++++++ +++++++ +++++++",
-"++++++++ ++                   ++ +++++++",
-"++++++++ ++ ++++++++ ++++++++ ++ +++++++",
-"+                                      +",
-"++++++++ ++ ++++++++ ++++++++ ++ +++++++",
-"++++++++ ++                   ++ +++++++",
-"++++++++ ++ +++++++++++++++++ ++ +++++++",
-"+                +++++++               +",
-"+ ++++++ +++++++ +++++++ +++++++ +++++ +",
-"+     ++                         ++    +",
-"+++++ ++ +++++++ +++++++ +++++++ ++ ++++",
-"+        +++++++    +    +++++++       +",
-"+ +++++++++++++++++ + ++++++++++++++++ +",
-"+                                      +",
-"++++++++++++++++++++++++++++++++++++++++",
+"+++++++++++++++++++++++++++++++++++++++++",
+"+s           +                          +",
+"+ +++++++++  ++++++++++++ +++++++  ++++ +",
+"+         +               +        +    +",
+"+ +++++++ +++++++++++++ +++++++++++++++++",
+"+ +     + +           + +               +",
+"+ +  +  + +  +  ++++  + + +++++++++++++ +",
+"+ +  +  + +  +  +e    + + +  +        + +",
+"+ +  ++++ +  ++++++++++ + +  ++++  +  + +",
+"+ +     + +             +          +  + +",
+"+ ++++  + +++++++++++++++ +++++++++++++ +",
+"+    +  +                 +             +",
+"+++  +  +++++++++++++++++++  ++++++++++ +",
+"+ +  +                  +    +     +  + +",
+"+ +  ++++ +++++++++++++ + ++++  +  +  + +",
+"+ +  +    +     +     + + +     +     + +",
+"+ +  +  ++++++  ++++  + + +  ++++++++++ +",
+"+                     + + +             +",
+"+++  +  + ++++++++++  + + +  ++++++++++++",
+"+++++++++++++++++++++++++++++++++++++++++",
 ]
+
 
 backtraverse_paths=[] #Rekürsif Fonksiyonun İçinden Değer Çıkarmak İçin Global Değişken Dışında Daha Doğru ?
 def BackTraverse(corx,cory):
@@ -224,13 +262,15 @@ setupMaze(grid)              # call the setup maze function
 visited.append((sprite.xcor(),sprite.ycor()))  #İlk Değeri Visited Olarak İşaretlendi              
 IsPosible(sprite.xcor(),sprite.ycor()) #
 
-BackTraverse(-288.0,232.0)
+#BackTraverse(-288.0,232.0)
+BackTraverse(end.xcor(),end.ycor())
 print(backtraverse_paths)
 
 while True:
     sprite.spriteright()
     sprite.spritedown()
     sprite.spriteleft()
-    sprite.spriteup() 
-    time.sleep(1)
+    sprite.spriteup()
+
+
 
