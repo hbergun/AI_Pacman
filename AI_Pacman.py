@@ -130,30 +130,32 @@ pathDict={
 
 }
 
-def IsPosible(x_pos,y_pos):                                           #                 x
+def IsPosible(x_pos,y_pos):
     if (x_pos+24,y_pos) not in walls and (x_pos+24,y_pos) not in visited: #            xxP P Bir Duvarmı ? Veya P Ziyaret Edildi Mi?
         pathDict[(x_pos+24,y_pos)]=''       #    Path İçin Bir Sözlük                   x
-        pathDict[(x_pos+24,y_pos)]+=str(x_pos)+str(y_pos)
+        pathDict[(x_pos+24,y_pos)]+=str(x_pos)+'/'+str(y_pos)
         queue.put((x_pos+24,y_pos))
         visited.append((x_pos+24,y_pos))
     if (x_pos-24,y_pos) not in walls and (x_pos-24,y_pos) not in visited:
         pathDict[(x_pos-24,y_pos)]=''
-        pathDict[(x_pos-24,y_pos)]+=str(x_pos)+str(y_pos)
+        pathDict[(x_pos-24,y_pos)]+=str(x_pos)+'/'+str(y_pos)
         queue.put((x_pos-24,y_pos))
         visited.append((x_pos-24,y_pos))
     if (x_pos,y_pos+24) not in walls and (x_pos,y_pos+24) not in visited:
         pathDict[(x_pos,y_pos+24)]=''
-        pathDict[(x_pos,y_pos+24)]+=str(x_pos)+str(y_pos)
+        pathDict[(x_pos,y_pos+24)]+=str(x_pos)+'/'+str(y_pos)
         queue.put((x_pos,y_pos+24))
         visited.append((x_pos,y_pos+24))
     if (x_pos,y_pos-24) not in walls and (x_pos,y_pos-24) not in visited:
         pathDict[(x_pos,y_pos-24)]=''
-        pathDict[(x_pos,y_pos-24)]+=str(x_pos)+str(y_pos)
+        pathDict[(x_pos,y_pos-24)]+=str(x_pos)+'/'+str(y_pos)
         queue.put((x_pos,y_pos-24))
         visited.append((x_pos,y_pos-24))
-    if(len(queue.queue)!=0):
+    if(len(queue.queue)!=0) and (-288.0,232.0) not in visited: #Test Cord end.xcor(),end.ycor()
         x_y_pos=queue.get()
-        #IsPosible(x_y_pos[0],x_y_pos[1])
+        IsPosible(x_y_pos[0],x_y_pos[1])
+    else:
+        return
     
 
 grid = [
@@ -181,6 +183,13 @@ grid = [
 "++++++++++++++++++++++++++++++++++++++++",
 ]
 
+def BackTraverse(corx,cory):
+    PrevPath=pathDict[(corx,cory)].split('/')
+    if  (float(PrevPath[0]),float(PrevPath[1])) != (-456.0,232.0):
+        BackTraverse(float(PrevPath[0]),float(PrevPath[1]))
+    else:
+        return 
+
 
 def setupMaze(grid):
     for y in range(len(grid)):                       # select each line in the grid   Labirent İçin Kodlanan Grid'in Tüm Birimleri Çizilecek
@@ -202,8 +211,6 @@ def setupMaze(grid):
             if character == "s":                     # if the grid character contains an s
                 sprite.goto(screen_x, screen_y)      # move turtle to the x and y location
                 sprite.pen(fillcolor="black", pencolor="yellow", pensize=10)
-                IsPosible(screen_x,screen_y)
-                print(pathDict)
 
 # ############ main program starts here  ######################
 
@@ -215,10 +222,22 @@ finish = []                  # enable the finish array
 
 setupMaze(grid)              # call the setup maze function
 
+visited.append((sprite.xcor(),sprite.ycor()))  #İlk Değeri Visited Olarak İşaretlendi              
+IsPosible(sprite.xcor(),sprite.ycor()) #
+
+BackTraverse(-288.0,232.0)
+
+BackVal=pathDict[-288.0,232.0].split('/') #Ulaşılması İstenen Değerden Geriye doğru gidilir.
+
+
+
+
+
+
 while True:
     sprite.spriteright()
     sprite.spritedown()
     sprite.spriteleft()
     sprite.spriteup() 
-    time.sleep(0.02)
+    time.sleep(1)
 
