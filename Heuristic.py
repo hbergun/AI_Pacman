@@ -1,13 +1,11 @@
 import math
-def ManhattanDistance(sprite_x,sprite_y,target_x,target_y):
-    distance_x=target_x-sprite_x
-    distance_y=target_y-sprite_y
-    return abs(distance_x)+abs(distance_y)
 
-def TwoDotDiff(sprite_x,sprite_y,target_x,target_y):
+def EuclideanDis(sprite_x,sprite_y,target_x,target_y): #Euclidean Uzaklığı
      return math.sqrt(pow((target_x-sprite_x),2)+pow((target_y-sprite_y),2))
 
-def TravelCost(self):
-     self.travel_cost+=24
-     print("Gezinme Maliyeti",self.travel_cost)
+def ManhattanDis(x_sprite,y_sprite,x_target,y_target): #Manhattan Uzaklığı
+     distance_x=x_target-x_sprite
+     distance_y=y_target-y_sprite
+     return abs(distance_x/24)+abs(distance_y/24)
+
           
